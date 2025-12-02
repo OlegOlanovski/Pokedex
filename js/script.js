@@ -22,11 +22,8 @@ async function loadMore() {
     pokemonOrder.push(poke.id);
     html += buildCard(poke);
   }
-
-  setTimeout(() => {
-    appendToContent(html);
-    setLoadingState(false);
-  }, 800);
+  appendToContent(html);
+  setLoadingState(false);
 }
 
 // =================
