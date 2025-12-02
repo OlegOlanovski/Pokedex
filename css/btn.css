@@ -1,0 +1,41 @@
+.tab_btn.active {
+  background: #ffcc00;
+}
+
+.tab_btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn_prev,
+.btn_next {
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 10px;
+  background-color: #ffcb05;
+}
+
+.load_more_btn {
+  padding: 12px 20px;
+  font-size: 20px;
+  border-radius: 10px;
+  border: none;
+  background-color: #ffcb05;
+  cursor: pointer;
+  margin: 30px auto;
+  display: block;
+}
+.load_more_btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.close_btn {
+  float: right;
+  cursor: pointer;
+  font-size: 20px;
+}

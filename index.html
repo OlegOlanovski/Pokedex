@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="./img/pokeball.png" type="image/png">
+    <title>Pokedex</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/btn.css">
+    <link rel="stylesheet" href="fonts.css">
+</head>
+
+<body onload="init()">
+    <header> <a href="index.html" class="logo_area"> <img class="logo_title" src="./img/pokemon_title.png"
+                alt="Pokemon Title logo"> </a>
+        <div class="search_container"> <input class="search_input" type="text" placeholder="Search Pokémon"
+                minlength="3"> </div>
+    </header>
+    <div class="content" id="content"></div>
+    <p id="notFoundMessage" class="not-found">No Pokémon found!</p>
+    <div id="modal" class="hidden" onclick="closeModal()">
+        <div id="modalBox" class="modal_box" onclick="event.stopPropagation()"> <span id="closeBtn" class="close_btn"
+                onclick="closeModal()">✖</span>
+            <div class="modal_content" id="modalContent"></div>
+        </div>
+    </div>
+    <div id="spinner" class="spinner hidden"></div>
+    <button class="load_more_btn" id="loadMoreBtn" onclick="loadMore()">Load More</button>
+    <script src="js/db.js"></script>
+    <script src="js/template.js"></script>
+    <script src="js/script.js"></script>
+</body>
+
+</html>
