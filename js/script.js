@@ -1,145 +1,134 @@
-// =======
-//  INIT
-// =======
 function init() {
   loadMore();
   setupSearch();
 }
 
-// ===========
-//  LOAD MORE
-// ===========
 async function loadMore() {
   setLoadingState(true);
-
-  const list = await fetchPokemonList(limit, offset);
-  offset += limit;
-
-  let html = "";
-  for (let i = 0; i < list.results.length; i++) {
-    const poke = await fetchSinglePokemon(list.results[i].url);
-    loadedPokemons.push(poke);
-    pokemonOrder.push(poke.id);
-    html += buildCard(poke);
+  if (isSearching) {
+    setLoadingState(false);
+    return;
   }
-  appendToContent(html);
+  const list = await fetchPokemonList(limit, offset);
+  if (!list || !list.results) {
+    setLoadingState(false);
+    return;
+  }
+  offset += limit;
+  const newHtmlContent = await processPokemonList(list);
+  appendToContent(newHtmlContent);
   setLoadingState(false);
 }
 
-// =================
-//  HTML CONTENT ADD
-// =================
-function appendToContent(html) {
-  document.getElementById("content").innerHTML += html;
+async function processPokemonList(list) {
+  let html = "";
+  for (let i = 0; i < list.results.length; i++) {
+    const pokemonUrl = list.results[i].url;
+    const poke = await fetchSinglePokemon(pokemonUrl);
+    if (poke) {
+      loadedPokemons.push(poke);
+      pokemonOrder.push(poke.id);
+      html += buildCard(poke);
+    }
+  }
+  return html;
 }
 
-// =============
-//  SPIN ON/OFF
-// =============
+function appendToContent(html) {
+  document.getElementById("content").insertAdjacentHTML("beforeend", html);
+}
+
 function setLoadingState(isLoading) {
   const btn = document.getElementById("loadMoreBtn");
   const spin = document.getElementById("spinner");
-
   btn.disabled = isLoading;
-
-  if (isLoading) spin.classList.remove("hidden");
-  else spin.classList.add("hidden");
+  spin.classList.toggle("hidden", !isLoading);
+  if (isSearching && !isLoading) {
+    btn.classList.add("hidden");
+  } else if (!isSearching) {
+    btn.classList.remove("hidden");
+  }
 }
 
-// ============
-//  CARD HTML
-// ============
 function buildCard(poke) {
   const types = extractTypes(poke);
   const typesHTML = buildTypesHTML(types);
-  const bg = getColorByType(types);
-  return cardTemplate(poke, bg, typesHTML);
+  return cardTemplate(poke, typesHTML);
 }
 
-// =======
-//  TYPES
-// =======
 function extractTypes(poke) {
-  const types = [];
-  for (let i = 0; i < poke.types.length; i++) {
-    types.push(poke.types[i].type.name);
+  const typesArray = [];
+  const typesData = poke.types;
+  for (let i = 0; i < typesData.length; i++) {
+    const typeObject = typesData[i];
+    const typeName = typeObject.type.name;
+    typesArray.push(typeName);
   }
-  return types;
+  return typesArray;
 }
 
-// ==============
-//  POKEMON DATA
-// ==============
 async function fetchSinglePokemon(url) {
   return await fetchJSON(url);
 }
 
-// ==============
-//  POKEMON LIST
-// ==============
 async function fetchPokemonList(limit, offset) {
   return await fetchJSON(
     `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`
   );
 }
 
-// ======================
-//  MODAL OPEN / CLOSE
-// ======================
 async function openModal(id) {
-  for (let i = 0; i < pokemonOrder.length; i++)
-    if (pokemonOrder[i] === id) currentIndex = i;
-
-  const poke = loadedPokemons[currentIndex];
-  const species = await fetchJSON(
-    `https://pokeapi.co/api/v2/pokemon-species/${poke.id}`
-  );
-
+  const currentList = isSearching ? filteredPokemons : loadedPokemons;
+  for (let i = 0; i < currentList.length; i++) {
+    if (currentList[i].id === id) {
+      currentIndex = i;
+      break;
+    }
+  }
+  const poke = currentList[currentIndex];
+  let species = poke.speciesData;
+  if (!species) {
+    species = await fetchJSON(
+      `https://pokeapi.co/api/v2/pokemon-species/${poke.id}`
+    );
+    poke.speciesData = species;
+  }
   renderModal(poke, species);
   document.getElementById("modal").classList.add("show");
-  document.body.style.overflow = "hidden"; // scroll off
+  document.body.style.overflow = "hidden";
 }
 
 function closeModal() {
   document.getElementById("modal").classList.remove("show");
-  document.body.style.overflow = ""; //scroll on
+  document.body.style.overflow = "";
 }
-//=============
-// RENDER MODAL
-//=============
+
 function renderModal(data, species) {
   const types = getTypes(data);
-  const bg = getColorByType(types);
+  const mainType = types[0];
   const typesList = formatTypeList(types);
   const eggGroups = formatEggGroups(species);
   const genderText = getGenderText(species);
   const totalStats = getTotalStats(data);
-
   const about = buildAboutHTML(data, species, typesList, genderText);
   const stats = buildStatsHTML(data);
   const spec = buildSpeciesHTML(species, totalStats, eggGroups);
-
   const modalContent = document.getElementById("modalContent");
-  modalContent.innerHTML = modalHTML(data, about, stats, spec, bg);
-
-  const imgContainer = modalContent.querySelector(".img_container");
-  if (imgContainer) imgContainer.style.backgroundColor = bg;
+  modalContent.innerHTML = modalHTML(data, about, stats, spec, mainType);
+  modalContent.className = `modal_content type-${mainType}`;
 }
 
-//============
-// TOTAL STATS
-//============
 function getTotalStats(data) {
-  let total = 0;
-  for (let i = 0; i < data.stats.length; i++) {
-    total += data.stats[i].base_stat;
+  let totalSum = 0;
+  const statsList = data.stats;
+  for (let i = 0; i < statsList.length; i++) {
+    const statObject = statsList[i];
+    const baseStatValue = statObject.base_stat;
+    totalSum = totalSum + baseStatValue;
   }
-  return total;
+  return totalSum;
 }
 
-//=======
-// GENDER
-//=======
 function getGenderText(species) {
   if (species.gender_rate === -1) return "Genderless";
   const female = (species.gender_rate / 8) * 100;
@@ -147,108 +136,139 @@ function getGenderText(species) {
   return `♂ ${male.toFixed(1)}% / ♀ ${female.toFixed(1)}%`;
 }
 
-//============
-// FORMAT EGG
-//============
 function formatEggGroups(species) {
-  let str = "";
-  for (let i = 0; i < species.egg_groups.length; i++) {
-    str += capitalize(species.egg_groups[i].name);
-    if (i < species.egg_groups.length - 1) str += ", ";
+  const eggGroups = species.egg_groups;
+  const formattedNames = [];
+  for (let i = 0; i < eggGroups.length; i++) {
+    const groupName = eggGroups[i].name;
+    const capitalizedName = capitalize(groupName);
+    formattedNames.push(capitalizedName);
   }
-  return str;
+  let resultString = "";
+  for (let i = 0; i < formattedNames.length; i++) {
+    resultString += formattedNames[i];
+    if (i < formattedNames.length - 1) {
+      resultString += ", ";
+    }
+  }
+  return resultString;
 }
 
-//===================
-//  FORMAT TYPEN LIST
-//===================
 function formatTypeList(types) {
-  let str = "";
+  const formattedNames = [];
   for (let i = 0; i < types.length; i++) {
-    str += capitalize(types[i]);
-    if (i < types.length - 1) str += ", ";
+    const typeName = types[i];
+    const capitalizedName = capitalize(typeName);
+    formattedNames.push(capitalizedName);
   }
-  return str;
-}
-//=======
-//  Typen
-//=======
-function getTypes(data) {
-  const arr = [];
-  for (let i = 0; i < data.types.length; i++) {
-    arr.push(data.types[i].type.name);
+  let resultString = "";
+  for (let i = 0; i < formattedNames.length; i++) {
+    resultString += formattedNames[i];
+    if (i < formattedNames.length - 1) {
+      resultString += ", ";
+    }
   }
-  return arr;
+  return resultString;
 }
 
-//=======
-//  TABS
-//=======
+function getTypes(data) {
+  const typeNames = [];
+  const typesData = data.types;
+  for (let i = 0; i < typesData.length; i++) {
+    const typeObject = typesData[i];
+    const name = typeObject.type.name;
+    typeNames.push(name);
+  }
+  return typeNames;
+}
+
 function showTab(name) {
   const tabs = ["about", "stats", "species"];
   for (let i = 0; i < tabs.length; i++) {
-    document.getElementById(`tab_${tabs[i]}_content`).classList.add("hidden");
-    document.getElementById(`tab_${tabs[i]}`).classList.remove("active");
+    const t = tabs[i];
+    const contentElement = document.getElementById(`tab_${t}_content`);
+    const buttonElement = document.getElementById(`tab_${t}`);
+    if (t !== name) {
+      contentElement.classList.add("hidden");
+    } else {
+      contentElement.classList.remove("hidden");
+    }
+    if (t === name) {
+      buttonElement.classList.add("active");
+    } else {
+      buttonElement.classList.remove("active");
+    }
   }
-  document.getElementById(`tab_${name}_content`).classList.remove("hidden");
-  document.getElementById(`tab_${name}`).classList.add("active");
 }
-//=============
-//  NEXT / PREV
-//=============
+
 function nextPokemon() {
+  const currentList = isSearching ? filteredPokemons : loadedPokemons;
   currentIndex++;
-  if (currentIndex >= loadedPokemons.length) currentIndex = 0;
-  openModal(loadedPokemons[currentIndex].id);
+  if (currentIndex >= currentList.length) {
+    currentIndex = 0;
+  }
+  openModal(currentList[currentIndex].id);
 }
 
 function prevPokemon() {
+  const currentList = isSearching ? filteredPokemons : loadedPokemons;
   currentIndex--;
-  if (currentIndex < 0) currentIndex = loadedPokemons.length - 1;
-  openModal(loadedPokemons[currentIndex].id);
+  if (currentIndex < 0) {
+    currentIndex = currentList.length - 1;
+  }
+  openModal(currentList[currentIndex].id);
 }
-//================
-//  SEARCH ONINPUT
-//================
+
+function filterAndCollectCards(v, cards) {
+  filteredPokemons.length = 0;
+  for (let i = 0; i < cards.length; i++) {
+    const card = cards[i];
+    const name = card.querySelector("h3").textContent.toLowerCase();
+    const shouldHide = isSearching && !name.includes(v);
+    card.classList.toggle("hidden-card", shouldHide);
+    if (!shouldHide) {
+      const idText = card.querySelector(".pokemon_number span").textContent;
+      const id = parseInt(idText.replace("# ", "").trim());
+      const poke = loadedPokemons.find((p) => p.id === id);
+      if (poke) {
+        filteredPokemons.push(poke);
+      }
+    }
+  }
+}
+
+function handleSearchInput(input, loadMoreBtn) {
+  const cards = document.getElementById("content").children;
+  const v = input.value.toLowerCase().trim();
+  isSearching = v.length >= 3;
+  loadMoreBtn.classList.toggle("hidden", isSearching);
+  filterAndCollectCards(v, cards);
+  checkNotFound();
+}
+
 function setupSearch() {
   const input = document.querySelector(".search_input");
+  const loadMoreBtn = document.getElementById("loadMoreBtn");
   input.oninput = function () {
-    const v = input.value.toLowerCase();
-    const cards = document.getElementById("content").children;
-
-    if (v.length < 3) {
-      for (let i = 0; i < cards.length; i++) cards[i].style.display = "";
-      return;
-    }
-
-    for (let i = 0; i < cards.length; i++) {
-      const name = cards[i]
-        .getElementsByTagName("h3")[0]
-        .textContent.toLowerCase();
-      cards[i].style.display = name.includes(v) ? "" : "none";
-    }
-    checkNotFound();
+    handleSearchInput(input, loadMoreBtn);
   };
 }
-//=================
-//  CHECK NOTFOUND
-//=================
+
 function checkNotFound() {
   const content = document.getElementById("content");
   const notFoundMessage = document.getElementById("notFoundMessage");
   const cards = content.children;
-
   let anyVisible = false;
   for (let i = 0; i < cards.length; i++) {
-    if (cards[i].style.display !== "none") {
+    const card = cards[i];
+    if (!card.classList.contains("hidden-card")) {
       anyVisible = true;
       break;
     }
   }
-
-  if (anyVisible) {
-    notFoundMessage.classList.remove("show");
-  } else {
+  if (anyVisible === false) {
     notFoundMessage.classList.add("show");
+  } else {
+    notFoundMessage.classList.remove("show");
   }
 }

@@ -1,0 +1,202 @@
+:root {
+  --color-grass: #78c850;
+  --color-fire: #f08030;
+  --color-water: #6890f0;
+  --color-bug: #a8b820;
+  --color-normal: #a8a878;
+  --color-poison: #a040a0;
+  --color-electric: #f8d030;
+  --color-ground: #e0c068;
+  --color-fairy: #ee99ac;
+  --color-fighting: #c03028;
+  --color-psychic: #f85888;
+  --color-rock: #b8a038;
+  --color-ghost: #705898;
+  --color-ice: #98d8d8;
+  --color-dragon: #7038f8;
+  --color-dark: #705848;
+  --color-steel: #b8b8d0;
+  --color-flying: #a890f0;
+
+  --icon-grass: "🌿 ";
+  --icon-fire: "🔥 ";
+  --icon-water: "💧 ";
+  --icon-electric: "⚡ ";
+  --icon-bug: "🐛 ";
+  --icon-normal: "⚪ ";
+  --icon-poison: "☠️ ";
+  --icon-ground: "🌍 ";
+  --icon-fairy: "✨ ";
+  --icon-fighting: "🥊 ";
+  --icon-psychic: "🔮 ";
+  --icon-rock: "🪨 ";
+  --icon-ghost: "👻 ";
+  --icon-ice: "❄️ ";
+  --icon-dragon: "🐉 ";
+  --icon-dark: "🌑 ";
+  --icon-steel: "⚙️ ";
+  --icon-flying: "🕊️ ";
+}
+.card.type-grass {
+  background-color: var(--color-grass);
+}
+.card.type-fire {
+  background-color: var(--color-fire);
+}
+.card.type-water {
+  background-color: var(--color-water);
+}
+.card.type-bug {
+  background-color: var(--color-bug);
+}
+.card.type-normal {
+  background-color: var(--color-normal);
+}
+.card.type-poison {
+  background-color: var(--color-poison);
+}
+.card.type-electric {
+  background-color: var(--color-electric);
+}
+.card.type-ground {
+  background-color: var(--color-ground);
+}
+.card.type-fairy {
+  background-color: var(--color-fairy);
+}
+.card.type-fighting {
+  background-color: var(--color-fighting);
+}
+.card.type-psychic {
+  background-color: var(--color-psychic);
+}
+.card.type-rock {
+  background-color: var(--color-rock);
+}
+.card.type-ghost {
+  background-color: var(--color-ghost);
+}
+.card.type-ice {
+  background-color: var(--color-ice);
+}
+.card.type-dragon {
+  background-color: var(--color-dragon);
+}
+.card.type-dark {
+  background-color: var(--color-dark);
+}
+.card.type-steel {
+  background-color: var(--color-steel);
+}
+.card.type-flying {
+  background-color: var(--color-flying);
+}
+.modal_content .img_container.type-grass {
+  background-color: var(--color-grass);
+}
+.modal_content .img_container.type-fire {
+  background-color: var(--color-fire);
+}
+.modal_content .img_container.type-water {
+  background-color: var(--color-water);
+}
+.modal_content .img_container.type-bug {
+  background-color: var(--color-bug);
+}
+.modal_content .img_container.type-normal {
+  background-color: var(--color-normal);
+}
+.modal_content .img_container.type-poison {
+  background-color: var(--color-poison);
+}
+.modal_content .img_container.type-electric {
+  background-color: var(--color-electric);
+}
+.modal_content .img_container.type-ground {
+  background-color: var(--color-ground);
+}
+.modal_content .img_container.type-fairy {
+  background-color: var(--color-fairy);
+}
+.modal_content .img_container.type-fighting {
+  background-color: var(--color-fighting);
+}
+.modal_content .img_container.type-psychic {
+  background-color: var(--color-psychic);
+}
+.modal_content .img_container.type-rock {
+  background-color: var(--color-rock);
+}
+.modal_content .img_container.type-ghost {
+  background-color: var(--color-ghost);
+}
+.modal_content .img_container.type-ice {
+  background-color: var(--color-ice);
+}
+.modal_content .img_container.type-dragon {
+  background-color: var(--color-dragon);
+}
+.modal_content .img_container.type-dark {
+  background-color: var(--color-dark);
+}
+.modal_content .img_container.type-steel {
+  background-color: var(--color-steel);
+}
+.modal_content .img_container.type-flying {
+  background-color: var(--color-flying);
+}
+
+.typeTag.type-grass::before {
+  content: var(--icon-grass);
+}
+.typeTag.type-fire::before {
+  content: var(--icon-fire);
+}
+.typeTag.type-water::before {
+  content: var(--icon-water);
+}
+.typeTag.type-electric::before {
+  content: var(--icon-electric);
+}
+.typeTag.type-bug::before {
+  content: var(--icon-bug);
+}
+.typeTag.type-normal::before {
+  content: var(--icon-normal);
+}
+.typeTag.type-poison::before {
+  content: var(--icon-poison);
+}
+.typeTag.type-ground::before {
+  content: var(--icon-ground);
+}
+.typeTag.type-fairy::before {
+  content: var(--icon-fairy);
+}
+.typeTag.type-fighting::before {
+  content: var(--icon-fighting);
+}
+.typeTag.type-psychic::before {
+  content: var(--icon-psychic);
+}
+.typeTag.type-rock::before {
+  content: var(--icon-rock);
+}
+.typeTag.type-ghost::before {
+  content: var(--icon-ghost);
+}
+.typeTag.type-ice::before {
+  content: var(--icon-ice);
+}
+.typeTag.type-dragon::before {
+  content: var(--icon-dragon);
+}
+.typeTag.type-dark::before {
+  content: var(--icon-dark);
+}
+.typeTag.type-steel::before {
+  content: var(--icon-steel);
+}
+.typeTag.type-flying::before {
+  content: var(--icon-flying);
+}

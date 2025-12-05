@@ -7,11 +7,10 @@
 }
 @font-face {
   font-family: "KanitRegular";
-  src: url("fonts/Kanit_Regular.ttf") format("truetype");
+  src: url("./fonts/Kanit-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
 }
-
 .logo_area {
   display: flex;
   max-width: 1920px;
@@ -44,7 +43,7 @@ input {
 .card {
   background-color: #fff;
   border-radius: 10px;
-  width: 150px;
+  width: 160px;
   text-align: center;
   padding: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -96,9 +95,9 @@ input {
   padding: 20px;
   border-radius: 10px;
   width: 450px;
-  min-height: 671px;
+  max-height: 96vh;
+  overflow-y: auto;
 }
-
 .poke_img {
   width: 275px;
 }
@@ -146,7 +145,6 @@ input {
   background: #4caf50;
   border-radius: 6px;
 }
-
 .spinner {
   width: 200px;
   height: 200px;
@@ -177,13 +175,12 @@ input {
     transform: rotate(360deg);
   }
 }
-
 .tab_content {
   margin-top: 25px;
   background-color: antiquewhite;
   border-radius: 10px;
   padding: 10px;
-  min-height: 276px;
+  min-height: 298px;
 }
 p {
   line-height: 2;
@@ -199,7 +196,6 @@ p {
   margin-top: 20px;
   display: none;
 }
-
 .not-found.show {
   display: block;
 }
@@ -207,4 +203,30 @@ p {
   display: flex;
   justify-content: center;
   border-radius: 10px;
+}
+.card.hidden-card {
+  display: none;
+}
+.typeTag {
+  position: relative;
+  padding: 4px 8px 4px 22px;
+  white-space: nowrap;
+}
+.typeTag::before {
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+@media (max-width: 480px) {
+  .modal_box {
+    width: 90vw;
+    margin: 20px auto;
+  }
+  .poke_img {
+    width: 200px;
+  }
+  .modal_content h2 {
+    font-size: 19px;
+  }
 }
